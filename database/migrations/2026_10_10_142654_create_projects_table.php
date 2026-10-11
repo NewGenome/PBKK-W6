@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('tema_agent')->default('Ollama'); // default() modifier
             $table->string('api_key_secure');
             $table->foreignId('user_id')
-                  ->constrained()
-                  ->onDelete('cascade');                    // cascade foreign key
+                ->constrained()
+                ->onDelete('cascade');                    // cascade foreign key
             $table->timestamps();
         });
     }

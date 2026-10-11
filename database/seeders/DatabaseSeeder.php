@@ -19,8 +19,8 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
         $dosen = User::factory()->create([
-            'name'     => 'Dosen PBKK',
-            'email'    => 'dosenpbkk@its.ac.id',
+            'name' => 'Dosen PBKK',
+            'email' => 'dosenpbkk@its.ac.id',
             'password' => Hash::make('password'), // hashed cast makes this idempotent
         ]);
 
