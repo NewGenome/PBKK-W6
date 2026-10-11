@@ -12,16 +12,8 @@ use Illuminate\Support\Str;
  */
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
     protected static ?string $password;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
@@ -34,8 +26,40 @@ class UserFactory extends Factory
     }
 
     /**
-     * Indicate that the model's email address should be unverified.
+     * Indicate that the user is an ITS student with a realistic student ID email.
+     *
+     * Format: 50XXYY1ZZZ@student.its.ac.id
+     *   XX  = department code (01-40)
+     *   YY  = enrollment year (2 digits)
+     *   ZZZ = registration number (001-250)
      */
+    public function itsStudent(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'email' => $this->generateUniqueItsEmail(),
+        ]);
+    }
+
+    /**
+     * Build a unique ITS student email, retrying on collision.
+     *
+     * Uniqueness is enforced on the full email string, not the registration
+     * number alone, because two students in different departments or years
+     * can legitimately share the same ZZZ value.
+     */
+    protected function generateUniqueItsEmail(): string
+    {
+        do {
+            $department = str_pad((string) fake()->numberBetween(1, 40), 2, '0', STR_PAD_LEFT);
+            $year = fake()->randomElement(['22', '23', '24', '25']);
+            $regNumber = str_pad((string) fake()->numberBetween(1, 250), 3, '0', STR_PAD_LEFT);
+
+            $email = "50{$department}{$year}1{$regNumber}@student.its.ac.id";
+        } while (User::where('email', $email)->exists());
+
+        return $email;
+    }
+
     public function unverified(): static
     {
         return $this->state(fn (array $attributes) => [

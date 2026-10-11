@@ -28,12 +28,17 @@ Tugas minggu ke-6 kelompok 2, portal Laravel yang menyimpan user profiles dengan
   - [Factories & Seeders Orkestrasi](#penilaian-factories--seeders-orkestrasi)
   - [Integritas Query di Dashboard](#penilaian-integritas-query-di-dashboard)
   - [Kerapian Kode & Standar PSR-12](#penilaian-kerapian-kode--standar-psr-12)
+- [Testing](#testing)
 
 ## How to Run
 
 ### Laravel App
 
 ```bash
+# 0. Clone the repository
+git clone https://github.com/NewGenome/PBKK-W6
+cd PBKK-W6
+
 # 1. Install PHP and Node dependencies
 composer install
 npm install
@@ -135,10 +140,9 @@ php artisan migrate:fresh --seed
 - `Database\Factories\ProjectFactory` memakai Faker untuk menghasilkan judul proposal Agentic AI
   yang realistis dari daftar tema (`Ollama`, `LangChain`, `CrewAI`, dll.) dan subjek (`Autonomous
   Research Assistant`, `Multi-Agent Code Reviewer`, dll.).
-- `DatabaseSeeder` membuat **15 user mahasiswa acak**, masing-masing dengan **2 project dummy**
-  via `User::factory()->count(15)->has(Project::factory()->count(2))->create()`.
+- `DatabaseSeeder` membuat **15 user mahasiswa ITS acak**, masing-masing dengan **2 project dummy** via `User::factory()->count(15)->itsStudent()->has(Project::factory()->count(2))->create()`. Email mereka mengikuti format `50XXYY1ZZZ@student.its.ac.id`.
 - Akun demo `dosenpbkk@its.ac.id` (password `password`) disiapkan dengan 3 project siap presentasi.
-- `UserFactory` menggunakan `fake()->unique()->safeEmail()` sehingga tidak ada duplikasi email.
+- `UserFactory::generateUniqueItsEmail()` menghasilkan email mahasiswa ITS dengan format `50XXYY1ZZZ@student.its.ac.id` (kode departemen, tahun angkatan, nomor registrasi). Uniqueness diukur dari keseluruhan string email (karena berupa StudentID/NRP).
 
 | Users Seed Result | Project Seed Result |
 | :---------------: | :------------------ |
@@ -169,3 +173,18 @@ php artisan migrate:fresh --seed
   tidak ter-commit.
 - README ini mendokumentasikan langkah setup lokal (`composer install`, `php artisan migrate --seed`,
   `docker compose up -d`).
+
+Untuk pengujian formatting PSR-12, silahkan lakukan
+
+```bash
+vendor/bin/pint --test
+```
+
+## Testing
+
+The test suite uses Pest with an in-memory SQLite database (see `phpunit.xml`),
+so it does not touch your Docker MySQL container.
+
+```bash
+php artisan test
+```

@@ -35,6 +35,7 @@ class DatabaseSeeder extends Seeder
         // 15 random students, each with 2 dummy projects.
         User::factory()
             ->count(15)
+            ->itsStudent()
             ->has(Project::factory()->count(2))
             ->create();
     }
